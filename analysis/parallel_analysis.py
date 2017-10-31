@@ -33,6 +33,7 @@ def main():
     os.chdir(img_dir)
     files = [f for f in os.listdir() if '.tif' in f.lower()]
     yfp_imgs = [y for y in files if '515' in y]
+    gfp_imgs = [y for y in files if '488' in y]
     if expt_type == 'tft':
         mch_imgs = [m for m in files if '594' in m]
         output_frame = pd.DataFrame({'img': [],
@@ -47,14 +48,23 @@ def main():
                                      'obj_channel': [],
                                      'obj_number': [],
                                      'volume': [],
-                                     'yfp': [],
+                                     'yfp': []
+                                    })
+    if expt_type == 'stdev':
+        output_frame = pd.DataFrame({'img': [],
+                                     'obj_channel': [],
+                                     'obj_number': [],
+                                     'volume': [],
+                                     'gfp_mean': [],
+                                     'gfp_stdev': []
                                     })
     pickles = get_pickle_set(img_dir, array_l, array_n)
-    yfp_ids = get_img_ids(yfp_imgs)
-    yfp_ids = {v: k for k, v in yfp_ids.items()}
-    if expt_type == 'tft':
-        mch_ids = get_img_ids(mch_imgs)
-        mch_ids = {v: k for k, v in mch_ids.items()}
+    if expt_type != 'stdev':
+        yfp_ids = get_img_ids(yfp_imgs)
+        yfp_ids = {v: k for k, v in yfp_ids.items()}
+        if expt_type == 'tft':
+            mch_ids = get_img_ids(mch_imgs)
+            mch_ids = {v: k for k, v in mch_ids.items()}
     for p in pickles:
         os.chdir(img_dir + '/pickles')
         cfile = open(p,'rb')
@@ -66,36 +76,56 @@ def main():
         pickle_channel = pickle_channel[cpickle.filename]
         if hasattr(cpickle, 'mitochondria'):
             obj_type = 'mito'
-        else:
+        elif hasattr(cpickle, 'peroxisomes'):
             obj_type = 'pex'
-        print('current segmented object identifier: ' + pickle_id)
-        print('current segmented object channel: ' + pickle_channel)
-        os.chdir(img_dir)
-        print('current YFP image file: ' + yfp_ids[pickle_id])
-        yfp_img = io.imread(yfp_ids[pickle_id])
-        if expt_type == 'tft':
-            print('current mCherry image file: ' + mch_ids[pickle_id])
-            mch_img = io.imread(mch_ids[pickle_id])
-        yfp_vals = {}
-        volumes_v2 = {}
-        if expt_type == 'tft':
-            mch_vals = {}
-        for obj in cpickle.obj_nums:
-            print('     current obj number: ' + str(obj))
-            if obj_type == 'mito':
-                yfp_vals[obj] = sum(yfp_img[cpickle.mitochondria == obj])
-                volumes_v2[obj] = len(np.flatnonzero(cpickle.mitochondria == obj))
-                if expt_type == 'tft':
-                    mch_vals[obj] = sum(mch_img[cpickle.mitochondria == obj])
-            else:
-                yfp_vals[obj] = sum(yfp_img[cpickle.peroxisomes == obj])
-                volumes_v2[obj] = len(np.flatnonzero(cpickle.peroxisomes == obj))
-                if expt_type == 'tft':
-                    mch_vals[obj] = sum(mch_img[cpickle.peroxisomes == obj])
-            print('     yfp intensity: ' + str(yfp_vals[obj]))
+        elif hasattr(cpickle, 'final_cells'):
+            obj_type = 'cells'
+        if expt_type != 'stdev':
+            print('current segmented object identifier: ' + pickle_id)
+            print('current segmented object channel: ' + pickle_channel)
+            os.chdir(img_dir)
+            print('current YFP image file: ' + yfp_ids[pickle_id])
+            yfp_img = io.imread(yfp_ids[pickle_id])
             if expt_type == 'tft':
-                print('     mcherry intensity: ' + str(mch_vals[obj]))
-            print('')
+                print('current mCherry image file: ' + mch_ids[pickle_id])
+                mch_img = io.imread(mch_ids[pickle_id])
+            yfp_vals = {}
+            volumes_v2 = {}
+            if expt_type == 'tft':
+                mch_vals = {}
+            for obj in cpickle.obj_nums:
+                print('     current obj number: ' + str(obj))
+                if obj_type == 'mito':
+                    yfp_vals[obj] = sum(yfp_img[cpickle.mitochondria == obj])
+                    volumes_v2[obj] = len(np.flatnonzero(cpickle.mitochondria == obj))
+                    if expt_type == 'tft':
+                        mch_vals[obj] = sum(mch_img[cpickle.mitochondria == obj])
+                else:
+                    yfp_vals[obj] = sum(yfp_img[cpickle.peroxisomes == obj])
+                    volumes_v2[obj] = len(np.flatnonzero(cpickle.peroxisomes == obj))
+                    if expt_type == 'tft':
+                        mch_vals[obj] = sum(mch_img[cpickle.peroxisomes == obj])
+                print('     yfp intensity: ' + str(yfp_vals[obj]))
+                if expt_type == 'tft':
+                    print('     mcherry intensity: ' + str(mch_vals[obj]))
+        else:
+            print('current segmented object identifier: ' + pickle_id)
+            print('current segmented object channel: ' + pickle_channel)
+            os.chdir(img_dir)
+            print('current GFP image file: ' + gfp_ids[pickle_id])
+            gfp_img = io.imread(gfp_ids[pickle_id])
+            gfp_mean = {}
+            volumes_v2 = {}
+            gfp_stdev = {}
+            for obj in cpickle.obj_nums:
+                print('     current obj number: ' + str(obj))
+                if obj_type == 'cells':
+                    gfp_mean[obj] = np.mean(gfp_img[cpickle.final_cells == obj])
+                    volumes_v2[obj] = len(np.flatnonzero(cpickle.final_cells == obj))
+                    gfp_stdev[obj] = np.std(gfp_img[cpickle.final_cells == obj])
+
+            
+        print('')
         print('Appending data to output...')
         if expt_type == 'yfp':
             currimg_data = pd.DataFrame({'img': pd.Series(data =
@@ -121,6 +151,19 @@ def main():
                                          'volume': volumes_v2,
                                          'yfp': yfp_vals,
                                          'mcherry': mch_vals,
+                                        })
+        elif expt_type == 'stdev':
+            currimg_data = pd.DataFrame({'img': pd.Series(data =
+                                                          [cpickle.filename]*len(cpickle.obj_nums),
+                                                          index = cpickle.obj_nums),
+                                         'obj_channel': pd.Series(data =
+                                                                  [pickle_channel]*len(cpickle.obj_nums),
+                                                              index = cpickle.obj_nums),
+                                         'obj_number': pd.Series(data = cpickle.obj_nums,
+                                                                 index = cpickle.obj_nums),
+                                         'volume': volumes_v2,
+                                         'gfp_mean': gfp_mean,
+                                         'gfp_stdev': gfp_stdev,
                                         })
         output_frame = pd.concat([output_frame, currimg_data])
     print('')
