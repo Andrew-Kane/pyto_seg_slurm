@@ -65,6 +65,9 @@ def main():
         if expt_type == 'tft':
             mch_ids = get_img_ids(mch_imgs)
             mch_ids = {v: k for k, v in mch_ids.items()}
+    else:
+        gfp_ids = get_img_ids(gfp_imgs)
+        gfp_ids = {v: k for k, v in gfp_ids.items()}
     for p in pickles:
         os.chdir(img_dir + '/pickles')
         cfile = open(p,'rb')
