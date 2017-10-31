@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append('/n/denic_lab/Users/nweir/python_packages/')
+sys.path.append('/n/home06/akane/code')
 import argparse
 from pyto_segmenter import PexSegment, MitoSegment
 import numpy as np
@@ -65,6 +65,9 @@ def main():
         if expt_type == 'tft':
             mch_ids = get_img_ids(mch_imgs)
             mch_ids = {v: k for k, v in mch_ids.items()}
+    else:
+        gfp_ids = get_img_ids(gfp_imgs)
+        gfp_ids = {v: k for k, v in gfp_ids.items()}
     for p in pickles:
         os.chdir(img_dir + '/pickles')
         cfile = open(p,'rb')
