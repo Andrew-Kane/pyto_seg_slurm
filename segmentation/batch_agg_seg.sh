@@ -17,15 +17,15 @@ source new-modules.sh
 source activate PYTO_SEG_ENV
 
 cd $img_dir
-imgs=($(find . -maxdepth 1 -iregex '.*_w[0-9]594.*\.TIF'))
+imgs=($(find . -maxdepth 1 -iregex '.*_w[0-9]488.*\.TIF'))
 echo ${imgs}
 nimgs_per_task=`expr ${#imgs[@]} / $ntasks`
 task_chk=$(($ntasks - 1))
 first_img=$((${SLURM_ARRAY_TASK_ID} * $nimgs_per_task + 1))
 if [ "${SLURM_ARRAY_TASK_ID}" -eq  "$task_chk" ]
-    then python3 ~/code/batch_segmentation/batch_pex_seg.py -d $img_dir -ht $high_threshold -lt \
+    then python3 ~/code/batch_segmentation/batch_agg_seg.py -d $img_dir -ht $high_threshold -lt \
         $low_threshold  "${imgs[@]:$first_img}"
-    else python3 ~/code/batch_segmentation/batch_pex_seg.py -d $img_dir -ht $high_threshold -lt \
+    else python3 ~/code/batch_segmentation/batch_agg_seg.py -d $img_dir -ht $high_threshold -lt \
         $low_threshold "${imgs[@]:$first_img:$nimgs_per_task}"
 fi
 
