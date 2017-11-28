@@ -7,7 +7,7 @@
 #SBATCH -o %A_%a.out
 #SBATCH -e %A_%a.err
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=nweir@fas.harvard.edu
+#SBATCH --mail-user=andrewkane@g.harvard.edu
 
 img_dir=$1
 high_threshold=$2
@@ -23,8 +23,8 @@ nimgs_per_task=`expr ${#imgs[@]} / $ntasks`
 task_chk=$(($ntasks - 1))
 first_img=$((${SLURM_ARRAY_TASK_ID} * $nimgs_per_task + 1))
 if [ "${SLURM_ARRAY_TASK_ID}" -eq  "$task_chk" ]
-    then python3 ~/code/batch_segmentation/batch_agg_seg.py -d $img_dir -ht $high_threshold -lt \
+    then python3 ~/code/pyto_seg_slurm/segmentation/batch_agg_seg.py -d $img_dir -ht $high_threshold -lt \
         $low_threshold  "${imgs[@]:$first_img}"
-    else python3 ~/code/batch_segmentation/batch_agg_seg.py -d $img_dir -ht $high_threshold -lt \
+    else python3 ~/code/pyto_seg_slurm/segmentation/batch_agg_seg.py -d $img_dir -ht $high_threshold -lt \
         $low_threshold "${imgs[@]:$first_img:$nimgs_per_task}"
 fi
