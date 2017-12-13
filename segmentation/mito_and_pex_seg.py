@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append('/n/denic_lab/Users/nweir/python_packages/')
+sys.path.append('/n/home06/akane/code')
 import argparse
 from pyto_segmenter import PexSegment, MitoSegment
 from scipy.ndimage.morphology import binary_dilation, generate_binary_structure
