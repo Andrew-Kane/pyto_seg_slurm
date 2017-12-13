@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append('/n/home06/akane/code')
+sys.path.append('/n/home06/akane/code/')
 import argparse
 from pyto_segmenter import PexSegment, MitoSegment
 import numpy as np
