@@ -27,7 +27,7 @@ def main():
     os.chdir(img_dir)
     flist = os.listdir()
     imgs = [f for f in flist if '.tif' in f.lower()]
-    cell_imgs = [im for im in imgs if '594' in im]
+    cell_imgs = [im for im in imgs if '447' in im]
     cell_imgs.sort()
     ims_per_job = int(len(cell_imgs)/array_l)
     split_cell_list = []
