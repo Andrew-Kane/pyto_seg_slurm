@@ -47,8 +47,7 @@ def main():
         cell_segmenter = CellSegment.CellSegmenter(cell_list[i],
                                                threshold = threshold)
         cell_obj = cell_segmenter.segment()
-        cell_obj.pickle(output_dir = img_dir + '/pickles', filename =
-                       cell_obj.filename[0:cell_obj.filename.index('.tif')] + '.pickle' )
+        cell_obj.pickle(output_dir = img_dir + '/pickles')
         os.chdir(img_dir)
         del cell_obj
 
