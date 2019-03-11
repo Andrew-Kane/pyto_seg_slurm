@@ -67,7 +67,7 @@ def main():
         foci = {}
         for obj in vacobj.obj_nums:
             print('     current obj number: ' + str(obj))
-            volumes_v2[obj] = len(np.flatnonzero(cells == obj))
+            volumes_v2[obj] = len(np.flatnonzero(vacuoles == obj))
             foci[obj] = foci_cts_dict[obj]  
         print('')
         currimg_data = pd.DataFrame({'img': pd.Series(data =
