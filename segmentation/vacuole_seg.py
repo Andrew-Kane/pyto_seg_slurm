@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append('/n/home06/akane/code')
 import argparse
-from pyto_segmenter import CellSegment
+from pyto_segmenter import VacuoleSegment
 
 
 parser = argparse.ArgumentParser(description = 'Segment cells from \
@@ -44,7 +44,7 @@ def main():
     for i in range(0,len(cell_list)):
         os.chdir(img_dir)
         print('SEGMENTING ' + cell_list[i])
-        cell_segmenter = CellSegment.CellSegmenter(cell_list[i],
+        cell_segmenter = VacuoleSegment.CellSegmenter(cell_list[i],
                                                threshold = threshold)
         cell_obj = cell_segmenter.segment()
         cell_obj.pickle(output_dir = img_dir + '/pickles')
