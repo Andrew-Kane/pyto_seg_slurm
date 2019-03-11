@@ -96,7 +96,7 @@ def main():
 def get_pickle_set(img_dir, array_l, array_n):
     '''Get the subset of pickles for analysis by a given instance.'''
     os.chdir(img_dir+ '/pickles')
-    pickle_list = [p for p in os.listdir() if '594' in p]
+    pickle_list = [p for p in os.listdir() if '447' in p]
     pickle_list.sort()
     pickles_per_job = int(len(pickle_list)/array_l)
     split_pickle_list = []
