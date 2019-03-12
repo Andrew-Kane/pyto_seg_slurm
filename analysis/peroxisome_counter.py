@@ -32,19 +32,29 @@ expt_type = args.type
 def main():
     os.chdir(img_dir+ '/pickles')
     files = [f for f in os.listdir() if '.pickle' in f.lower()]
-    cfp_imgs = [y for y in files if '447' in y]
-    yfp_imgs = [y for y in files if '515' in y]
+    os.chdir(img_dir)
+    imgs = [f for f in os.listdir() if '.tif' in f.lower()]
+    cfp_pickles = [y for y in files if '447' in y]
+    yfp_pickles = [y for y in files if '515' in y]
+    yfp_imgs = [y for y in imgs if '515' in y]
+    rfp_imgs = [y for y in files if '594' in y]
     output_frame = pd.DataFrame({'img': [],
                                  'obj_channel': [],
                                  'obj_number': [],
                                  'puncta': [],
+                                 'yfp_mean':[],
+                                 'yfp_stdev':[],
+                                 'rfp_mean':[],
+                                 'rfp_stdev':[]
                                     })
     #generates pickles to be analyzed in this array
     pickles = get_pickle_set(img_dir, array_l, array_n) 
     #generates IDs to properly assign cell and foci.
     (pickle_id, pickle_channel) = get_img_ids(pickles,return_channel = True)    
-    yfp_ids = get_img_ids(yfp_imgs)
-    cfp_ids = get_img_ids(cfp_imgs)
+    yfp_ids = get_img_ids(yfp_pickles)
+    cfp_ids = get_img_ids(cfp_pickles)
+    yfp_im_ids = get_img_ids(yfp_imgs)
+    rfp_ids = get_img_ids(rfp_imgs)
     #generates a cell, foci pair of the correct IDs
     for key, value in pickle_id.items():
         foci_cts_dict = {}
@@ -65,10 +75,23 @@ def main():
                 foci_cts_dict[i] = num_foci  # add a key:value pair to foci_cts_dict where key is cell # and val is num of foci
         volumes_v2 = {}
         foci = {}
+        os.chdr(img_dir)
+        print('current YFP image file: ' + yfp_im_ids[pickle_id])
+        yfp_img = io.imread(yfp_ids[pickle_id])
+        yfp_mean = {}
+        yfp_stdev = {}
+        print('current RFP image file: ' + rfp_ids[pickle_id])
+        rfp_img = io.imread(rfp_ids[pickle_id])
+        rfp_mean = {}
+        rfp_stdev = {}
         for obj in vacobj.obj_nums:
             print('     current obj number: ' + str(obj))
             volumes_v2[obj] = len(np.flatnonzero(vacuoles == obj))
-            foci[obj] = foci_cts_dict[obj]  
+            foci[obj] = foci_cts_dict[obj]
+            yfp_mean[obj] = np.mean(yfp_img[vacobj.final_cells == obj])
+            yfp_stdev[obj] = np.std(yfp_img[vacobj.final_cells == obj])
+            rfp_mean[obj] = np.mean(rfp_img[vacobj.final_cells == obj])
+            rfp_stdev[obj] = np.std(rfp_img[vacobj.final_cells == obj])
         print('')
         currimg_data = pd.DataFrame({'img': pd.Series(data =
                                                           [vacobj.filename]*len(vacobj.obj_nums),
@@ -118,6 +141,8 @@ def get_img_ids(img_files, return_channel = False):
         print('_______________________________________________________')
         print('     generating image identifier for ' + img)
         img = img.replace('pickled_','')
+        img = img.replace('.pickle','')
+        img = img.replace('.tif','')
         split_im = img.split('_')
         rm_channel = '_'.join([i for i in split_im if re.search(channel_re, i)
                                == None])
