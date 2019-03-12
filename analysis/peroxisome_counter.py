@@ -55,6 +55,7 @@ def main():
     cfp_ids = get_img_ids(cfp_pickles)
     yfp_im_ids = get_img_ids(yfp_imgs)
     rfp_ids = get_img_ids(rfp_imgs)
+    os.chdir(img_dir+ '/pickles')
     #generates a cell, foci pair of the correct IDs
     for key, value in pickle_id.items():
         foci_cts_dict = {}
