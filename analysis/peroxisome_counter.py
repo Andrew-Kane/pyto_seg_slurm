@@ -76,12 +76,12 @@ def main():
         volumes_v2 = {}
         foci = {}
         os.chdir(img_dir)
-        print('current YFP image file: ' + yfp_im_ids[pickle_id])
-        yfp_img = io.imread(yfp_ids[pickle_id])
+        print('current YFP image file: ' + yfp_im_ids[key])
+        yfp_img = io.imread(yfp_ids[key])
         yfp_mean = {}
         yfp_stdev = {}
-        print('current RFP image file: ' + rfp_ids[pickle_id])
-        rfp_img = io.imread(rfp_ids[pickle_id])
+        print('current RFP image file: ' + rfp_ids[key])
+        rfp_img = io.imread(rfp_ids[key])
         rfp_mean = {}
         rfp_stdev = {}
         for obj in vacobj.obj_nums:
