@@ -61,6 +61,7 @@ def main():
         foci_cts_dict = {}
         vacuole_pkl = cfp_ids[key]
         foci_pkl = yfp_ids[key]
+        print(os.getcwd())
         vacfile = open(vacuole_pkl,'rb')
         vacobj = pickle.load(vacfile)
         focifile = open(foci_pkl,'rb')
