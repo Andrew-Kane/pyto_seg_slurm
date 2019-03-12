@@ -37,7 +37,7 @@ def main():
     cfp_pickles = [y for y in files if '447' in y]
     yfp_pickles = [y for y in files if '515' in y]
     yfp_imgs = [y for y in imgs if '515' in y]
-    rfp_imgs = [y for y in files if '594' in y]
+    rfp_imgs = [y for y in imgs if '594' in y]
     output_frame = pd.DataFrame({'img': [],
                                  'obj_channel': [],
                                  'obj_number': [],
