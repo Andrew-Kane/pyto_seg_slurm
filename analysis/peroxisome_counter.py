@@ -75,7 +75,7 @@ def main():
                 foci_cts_dict[i] = num_foci  # add a key:value pair to foci_cts_dict where key is cell # and val is num of foci
         volumes_v2 = {}
         foci = {}
-        os.chdr(img_dir)
+        os.chdir(img_dir)
         print('current YFP image file: ' + yfp_im_ids[pickle_id])
         yfp_img = io.imread(yfp_ids[pickle_id])
         yfp_mean = {}
