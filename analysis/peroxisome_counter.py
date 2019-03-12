@@ -105,6 +105,10 @@ def main():
                                                                  index = vacobj.obj_nums),
                                          'volume': volumes_v2,
                                          'puncta': foci,
+                                         'yfp_mean': yfp_mean,
+                                         'yfp_stdev': yfp_stdev,
+                                         'rfp_mean': rfp_mean,
+                                         'rfp_stdev':rfp_stdev
                                         })
         output_frame = pd.concat([output_frame, currimg_data])
     print('')
